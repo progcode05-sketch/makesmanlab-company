@@ -109,6 +109,23 @@
     }
     .nav-cta:hover { background: var(--ink-2); transform: translateY(-1px); }
 
+    /* ── Hamburger ──────────────────────────────────────── */
+    .nav-hamburger {
+      display: none;
+      background: none; border: none;
+      cursor: pointer; padding: 4px;
+      color: var(--ink); flex-direction: column;
+      gap: 5px; z-index: 201;
+    }
+    .nav-hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: currentColor; border-radius: 2px;
+      transition: transform .25s, opacity .25s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
     /* ── Buttons ────────────────────────────────────────── */
     .btn {
       display: inline-flex; align-items: center; gap: 7px;
@@ -165,7 +182,20 @@
     .hero-sub {
       font-size: 18px; color: var(--ink-3);
       line-height: 1.7; max-width: 480px;
-      margin: 0 auto 44px;
+      margin: 0 auto 44px; min-height: 2.4em;
+    }
+    /* typing cursor */
+    .hero-sub .cursor {
+      display: inline-block;
+      width: 2px; height: 1.1em;
+      background: var(--blue);
+      vertical-align: text-bottom;
+      margin-left: 2px;
+      animation: blink .7s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
     }
     .hero-actions {
       display: flex; align-items: center;
@@ -301,48 +331,41 @@
     .about-grid {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 72px; align-items: center;
-      margin-top: 0;
     }
-    .about-left {}
     .about-img-wrap {
-      background: var(--bg);
+      background: var(--ink);
       border: 1px solid var(--line);
       border-radius: var(--r-xl);
-      aspect-ratio: 4/3;
-      display: flex; align-items: center;
-      justify-content: center;
+      aspect-ratio: 4/5;
       position: relative; overflow: hidden;
     }
     .about-img-wrap::before {
       content: '';
       position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 30% 40%, rgba(10,102,194,.1) 0%, transparent 65%);
+      background: linear-gradient(to bottom, transparent 55%, rgba(0,0,0,.65) 100%);
+      z-index: 1; pointer-events: none;
     }
-    .about-avatar {
-      width: 96px; height: 96px; border-radius: 50%;
-      background: var(--blue-light);
-      display: flex; align-items: center;
-      justify-content: center;
-      font-family: var(--display);
-      font-size: 40px; color: var(--blue);
-      border: 3px solid rgba(10,102,194,.15);
-      position: relative; z-index: 1;
+    .about-photo {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
     }
     .about-card {
-      position: absolute; bottom: 24px; left: 24px;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 12px; padding: 12px 16px;
-      box-shadow: var(--shadow);
-      z-index: 1;
+      position: absolute; bottom: 24px; left: 24px; right: 24px;
+      background: rgba(255,255,255,.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 14px; padding: 14px 18px;
+      z-index: 2;
     }
     .about-card-name {
-      font-size: 13px; font-weight: 600; color: var(--ink);
+      font-size: 14px; font-weight: 600; color: #fff;
     }
     .about-card-role {
-      font-size: 11.5px; color: var(--ink-4); margin-top: 2px;
+      font-size: 12px; color: rgba(255,255,255,.6); margin-top: 2px;
     }
-    .about-right {}
     .about-right .section-lbl { margin-bottom: 10px; }
     .about-right .section-h { margin-bottom: 20px; }
     .about-body {
@@ -457,15 +480,60 @@
     .foot-link:hover { color: var(--ink); }
     .foot-copy { font-size: 12px; color: var(--ink-4); }
 
+    /* ── Cursor glow ────────────────────────────────────── */
+    .cursor-glow {
+      position: fixed;
+      width: 560px; height: 560px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(10,102,194,.07) 0%, transparent 70%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      transition: left .12s ease, top .12s ease;
+      will-change: left, top;
+      mix-blend-mode: multiply;
+    }
+
     /* ── Responsive ─────────────────────────────────────── */
     @media (max-width: 860px) {
-      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-cta { display: none; }
+      .nav-links {
+        position: fixed; top: 64px; left: 0; right: 0;
+        background: rgba(255,255,255,.97);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--line);
+        flex-direction: column;
+        padding: 16px 28px 24px;
+        gap: 0;
+        transform: translateY(-110%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform .3s cubic-bezier(.4,0,.2,1), opacity .3s;
+        z-index: 199;
+        display: flex;
+      }
+      .nav-links.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .nav-links li a {
+        font-size: 16px; font-weight: 500;
+        display: block; padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+        color: var(--ink-2);
+      }
+      .nav-links li:last-child a { border-bottom: none; }
+
       .products-grid { grid-template-columns: 1fr; }
       .about-grid { grid-template-columns: 1fr; gap: 44px; }
       .about-img-wrap { aspect-ratio: 3/2; }
       .stats-row { gap: 40px; }
       .contact-card { padding: 52px 28px; }
       .foot-row { flex-direction: column; align-items: flex-start; }
+      .cursor-glow { display: none; }
     }
     @media (max-width: 560px) {
       .hero { padding: 72px 0 56px; }
@@ -475,6 +543,9 @@
 </head>
 <body>
 
+<!-- Cursor glow -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
 <!-- ══ NAV ══════════════════════════════════════════════════ -->
 <nav>
   <div class="wrap">
@@ -483,11 +554,14 @@
         <div class="nav-logo-dot"></div>
         Makersmanlab
       </a>
-      <ul class="nav-links">
+      <ul class="nav-links" id="navLinks">
         <li><a href="#products">Products</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
+      <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
       <a href="#products" class="nav-cta">
         Explore products
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -509,8 +583,8 @@
       Tools for people who take<br><em>LinkedIn seriously.</em>
     </h1>
 
-    <p class="hero-sub reveal d2">
-      Makersmanlab builds focused, no-bloat software for LinkedIn professionals — from writing better content to publishing it faster.
+    <p class="hero-sub reveal d2" id="heroSub">
+      <span class="cursor"></span>
     </p>
 
     <div class="hero-actions reveal d3">
@@ -529,19 +603,19 @@
   <div class="wrap">
     <div class="stats-row">
       <div class="stat reveal">
-        <div class="stat-n"><b>2</b></div>
+        <div class="stat-n"><b class="counter" data-target="2">0</b></div>
         <div class="stat-l">products shipped</div>
       </div>
       <div class="stat reveal d1">
-        <div class="stat-n"><b>1</b> founder</div>
+        <div class="stat-n"><b class="counter" data-target="1">0</b> founder</div>
         <div class="stat-l">building in public</div>
       </div>
       <div class="stat reveal d2">
-        <div class="stat-n"><b>0</b></div>
+        <div class="stat-n"><b class="counter" data-target="0">0</b></div>
         <div class="stat-l">VC funding. bootstrapped.</div>
       </div>
       <div class="stat reveal d3">
-        <div class="stat-n"><b>100%</b></div>
+        <div class="stat-n"><b class="counter" data-target="100" data-suffix="%">0</b></div>
         <div class="stat-l">focused on LinkedIn</div>
       </div>
     </div>
@@ -629,9 +703,9 @@
 
       <div class="about-left reveal">
         <div class="about-img-wrap">
-          <div class="about-avatar">M</div>
+          <img src="founder.jpg" class="about-photo" alt="Karan Singh — Founder, Makersmanlab" />
           <div class="about-card">
-            <div class="about-card-name">Makersmanlab</div>
+            <div class="about-card-name">Karan Singh</div>
             <div class="about-card-role">Solo founder · Building in public</div>
           </div>
         </div>
@@ -707,7 +781,7 @@
 
 <!-- ══ SCRIPTS ════════════════════════════════════════════════ -->
 <script>
-  /* Scroll reveal */
+  /* ── 1. Scroll reveal ──────────────────────────────────── */
   const io = new IntersectionObserver(
     entries => entries.forEach(e => {
       if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
@@ -715,6 +789,103 @@
     { threshold: .1, rootMargin: '0px 0px -28px 0px' }
   );
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* ── 2. Cursor glow ────────────────────────────────────── */
+  const glow = document.getElementById('cursorGlow');
+  let glowX = window.innerWidth / 2, glowY = window.innerHeight / 2;
+  document.addEventListener('mousemove', e => {
+    glowX = e.clientX; glowY = e.clientY;
+    glow.style.left = glowX + 'px';
+    glow.style.top  = glowY + 'px';
+  });
+
+  /* ── 3. Animated stat counters ─────────────────────────── */
+  function animateCounter(el, target, suffix, duration) {
+    if (target === 0) { el.textContent = '0' + suffix; return; }
+    const start = performance.now();
+    const step = now => {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3); // ease-out cubic
+      el.textContent = Math.round(ease * target) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const counterObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !e.target.dataset.done) {
+        e.target.dataset.done = '1';
+        const target = +e.target.dataset.target;
+        const suffix = e.target.dataset.suffix || '';
+        animateCounter(e.target, target, suffix, 1600);
+        counterObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: .5 });
+  document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
+
+  /* ── 4. Hamburger menu ─────────────────────────────────── */
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('navLinks');
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', isOpen);
+  });
+
+  // Close on nav link click
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      hamburger.classList.remove('open');
+    });
+  });
+
+  /* ── 5. Typing animation in hero ───────────────────────── */
+  const heroSub = document.getElementById('heroSub');
+  const texts = [
+    'Makersmanlab builds focused, no-bloat software for LinkedIn professionals — from writing better content to publishing it faster.',
+    'Two tools. One mission. Zero fluff.'
+  ];
+
+  let textIdx = 0, charIdx = 0, isDeleting = false, typingStarted = false;
+
+  function typeHero() {
+    const current = texts[textIdx];
+    const cursor  = heroSub.querySelector('.cursor');
+
+    if (!isDeleting) {
+      heroSub.childNodes[0] && heroSub.childNodes[0].nodeType === 3
+        ? heroSub.childNodes[0].textContent = current.slice(0, charIdx + 1)
+        : heroSub.insertBefore(document.createTextNode(current.slice(0, charIdx + 1)), cursor);
+      charIdx++;
+      if (charIdx === current.length) {
+        // pause then delete (only loop on first text, then stay on second)
+        if (textIdx === 0) {
+          setTimeout(() => { isDeleting = true; typeHero(); }, 2400);
+          return;
+        }
+        return; // stop after second phrase types out
+      }
+    } else {
+      heroSub.childNodes[0].textContent = current.slice(0, charIdx - 1);
+      charIdx--;
+      if (charIdx === 0) {
+        isDeleting = false;
+        textIdx = 1;
+        setTimeout(typeHero, 300);
+        return;
+      }
+    }
+    setTimeout(typeHero, isDeleting ? 28 : 42);
+  }
+
+  // Start typing after a short delay (lets page paint first)
+  setTimeout(() => {
+    if (!typingStarted) { typingStarted = true; typeHero(); }
+  }, 700);
 </script>
 
 </body>
