@@ -1,0 +1,15 @@
+# Internal docs — not for the public repo
+MAKERSMANLAB_HANDOFF.md
+CLAUDE.md
+
+# Claude Code internals
+.claude/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor folders
+.vscode/
+.idea/
